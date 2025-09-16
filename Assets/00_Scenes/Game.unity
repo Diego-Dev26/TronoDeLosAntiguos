@@ -8227,6 +8227,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5592305116177147867, guid: 838bdf309d3f75a48b08f5fbe793b002, type: 3}
+      propertyPath: offset.y
+      value: 1.6
+      objectReference: {fileID: 0}
     - target: {fileID: 5592305116177147871, guid: 838bdf309d3f75a48b08f5fbe793b002, type: 3}
       propertyPath: m_Name
       value: Main Camera
@@ -18580,7 +18584,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcaf98da263de2740b25ac0ecd4ea012, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefabName: PlayerNet
+  playerPrefabName: Ghurin
 --- !u!4 &1313725136
 Transform:
   m_ObjectHideFlags: 0

@@ -10,6 +10,10 @@ public class PlayerControllerSimple : MonoBehaviourPun
     public float gravity = -18f;
     public float jumpSpeed = 7.5f;
 
+    [Header("Animaciones")]
+    private Animator animator;
+    int walkingHash, jumpHash;
+
     [Header("Esquiva (Ctrl)")]
     public float dodgeDistance = 5f;     // cuánto avanza
     public float dodgeDuration = 0.25f;  // tiempo del dash
@@ -29,6 +33,10 @@ public class PlayerControllerSimple : MonoBehaviourPun
     {
         cc = GetComponent<CharacterController>();
         health = GetComponent<Health>();
+        animator = GetComponentInChildren<Animator>();
+
+        walkingHash = Animator.StringToHash("Walking");
+        jumpHash = Animator.StringToHash("Jump");
     }
 
     void OnEnable()
@@ -52,11 +60,24 @@ public class PlayerControllerSimple : MonoBehaviourPun
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         Vector3 wishDir = (transform.right * h + transform.forward * v).normalized;
+        // ACTUALIZAR ANIMACION
+        bool isWalking = wishDir.magnitude > 0.1f && !isDodging;
+        animator.SetBool(walkingHash, isWalking);
 
         // Salto
-        if (cc.isGrounded && yVel < 0) yVel = -2f;
+        if (cc.isGrounded && yVel < 0)
+        {
+            yVel = -2f;
+            animator.SetBool(jumpHash, false);   // 🔴 reset Jump al tocar el suelo
+        }
+
         if (cc.isGrounded && Input.GetKeyDown(KeyCode.Space))
+        {
             yVel = jumpSpeed;
+            animator.SetBool(jumpHash, true);    // 🔔 activar animación Jump
+        }
+
+
 
         // Esquiva (Ctrl) – en dirección del input; si no hay input, hacia adelante
         dodgeCdTimer -= Time.deltaTime;
