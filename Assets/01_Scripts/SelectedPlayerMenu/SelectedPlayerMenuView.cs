@@ -16,7 +16,6 @@ public class SelectedPlayerMenuView : MonoBehaviour
     [Header("Servicios")]
     [SerializeField] private CharacterSelectionServiceMono selectionService;
     private SelectedPlayerMenuPresenter _presenter;
-    private System.Action<string> _selHandler;
 
     private void Awake()
     {
@@ -36,18 +35,12 @@ public class SelectedPlayerMenuView : MonoBehaviour
 
         // Escucha cambios de selección para habilitar el botón
         selectionService.OnSelectedChanged += _ => SetConfirmInteractable(_presenter.CanConfirm());
-
-        _selHandler = _ => SetConfirmInteractable(_presenter.CanConfirm());
-        selectionService.OnSelectedChanged += _selHandler;
-
-        // estado inicial
-        SetConfirmInteractable(_presenter.CanConfirm());
     }
 
     private void OnDestroy()
     {
-        if (selectionService != null && _selHandler != null)
-            selectionService.OnSelectedChanged -= _selHandler;
+        if (selectionService != null)
+            selectionService.OnSelectedChanged -= _ => SetConfirmInteractable(_presenter.CanConfirm());
     }
 
     private void SetConfirmInteractable(bool value)

@@ -30,7 +30,7 @@ public class MainMenuPresenter : MonoBehaviour
     public void Salir() => _app.Quit();
 
     public void IniciarJuegoDesdeGames() => _sceneLoader.Load(_nombreEscenaJuego);
-
+    public void VolverMainMenu() => _sceneLoader.Load("MainMenu");
     public void CerrarGames() => _games.Hide();
     public void CerrarOptions() => _options.Hide();
 }

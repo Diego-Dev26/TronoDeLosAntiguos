@@ -56,6 +56,7 @@ public class MainMenuView : MonoBehaviour
     public void OnClickJugar() { _presenter.Jugar(); }
     public void OnClickOpciones() { _presenter.Opciones(); }
     public void OnClickSalir() { _presenter.Salir(); }
+    public void OnClickBackMainMenu() { _presenter.VolverMainMenu(); }
 
     public void OnClickIniciarJuego() { _presenter.IniciarJuegoDesdeGames(); }
     public void OnClickCerrarGames() { _presenter.CerrarGames(); }
