@@ -17962,8 +17962,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8748180796709188171}
   - component: {fileID: 2070917049332531636}
-  - component: {fileID: 7253318449998447489}
   - component: {fileID: -3559042508996849109}
+  - component: {fileID: 7253318449998447489}
+  - component: {fileID: 3203190841795177108}
   m_Layer: 0
   m_Name: CorridorCorner RigthBottom
   m_TagString: Untagged
@@ -17979,7 +17980,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5878161016839741517}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 21.041866, y: 0, z: 13.409902}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1855178288507605242}
@@ -18010,6 +18011,22 @@ MonoBehaviour:
   bottom: {fileID: 8329442542749313997}
   left: {fileID: 1391210964009471961}
   right: {fileID: 5316919673650664321}
+--- !u!114 &-3559042508996849109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5878161016839741517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97ec463b67700b34cbfc0fe70158d667, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volume: {fileID: 0}
+  boundsPadding: 0.4
+  triggerHeight: 3
+  isExit: 0
 --- !u!114 &7253318449998447489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18029,11 +18046,11 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 0
   ObservedComponents:
-  - {fileID: 0}
+  - {fileID: 3203190841795177108}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &-3559042508996849109
+--- !u!114 &3203190841795177108
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -18042,13 +18059,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 5878161016839741517}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97ec463b67700b34cbfc0fe70158d667, type: 3}
+  m_Script: {fileID: 11500000, guid: 8efc6b1d64977384eb3405357896c656, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  volume: {fileID: 0}
-  boundsPadding: 0.4
-  triggerHeight: 3
-  isExit: 0
+  m_PositionModel:
+    SynchronizeEnabled: 1
+    TeleportEnabled: 1
+    TeleportIfDistanceGreaterThan: 3
+    InterpolateOption: 2
+    InterpolateMoveTowardsSpeed: 1
+    InterpolateLerpSpeed: 1
+    ExtrapolateOption: 0
+    ExtrapolateSpeed: 1
+    ExtrapolateIncludingRoundTripTime: 1
+    ExtrapolateNumberOfStoredPositions: 1
+  m_RotationModel:
+    SynchronizeEnabled: 1
+    InterpolateOption: 1
+    InterpolateRotateTowardsSpeed: 180
+    InterpolateLerpSpeed: 5
+  m_ScaleModel:
+    SynchronizeEnabled: 0
+    InterpolateOption: 0
+    InterpolateMoveTowardsSpeed: 1
+    InterpolateLerpSpeed: 0
 --- !u!1 &5887354536351341310
 GameObject:
   m_ObjectHideFlags: 0

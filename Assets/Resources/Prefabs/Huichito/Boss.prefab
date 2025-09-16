@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &2483084257952837726
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 598761228458832193, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_Name
+      value: Boss
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.2639234
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.2639234
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.2639234
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.6716118
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -23.723473
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 30.158653
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 716632058783604829, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1741096025276310591, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: sceneViewId
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3723887107423480722, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: maxHP
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 5128735159825816324, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4179273594394628072, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+--- !u!1 &3042909219653419295 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 598761228458832193, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+  m_PrefabInstance: {fileID: 2483084257952837726}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5252367906754712921 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7679067490229576967, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
+  m_PrefabInstance: {fileID: 2483084257952837726}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4705505342198026998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3042909219653419295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c5496b5560440443a01c329501cf15e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  moveSpeed: 4
+  detectionRange: 15
+  stopDistance: 1.6
+  muzzle: {fileID: 5252367906754712921}
+  projectilePrefab: {fileID: 2643262868867953028, guid: 2b1a4c05282bfa843af0f6915bd96624, type: 3}
+  minionPrefab: {fileID: 497726716270743043, guid: 1ba080652d57a4e4a86ad4c4bff030b1, type: 3}
+  phase2At: 0.7
+  phase3At: 0.35
+  shootCooldown: 1.25
+  shootDamage: 14
+  shootSpeed: 16
+  shootLife: 4
+  ringCooldown: 2.5
+  ringCountBase: 14
+  ringWaves: 1
+  ringYawOffsetPerWave: 12
+  summonCooldown: 5
+  maxMinionsAlive: 4
+  summonRadius: 4
+  preferMinDist: 6
+  preferMaxDist: 12
