@@ -30,13 +30,20 @@ public class NetLauncher : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        Debug.Log("[NET] JoinedRoom -> Spawn player");
+        var pos = NetSpawnPoints.GetSpawn();
+        var rot = Quaternion.identity;
 
-        // Usa tus puntos de spawn
-        Vector3 pos = NetSpawnPoints.GetSpawn();
-        Quaternion rot = Quaternion.identity; // o mira hacia tu forward deseado
+        string id = PlayerPrefs.GetString("selected_character_id", "MeleeRapido");
+        string prefabName = id switch
+        {
+            "MeleeRapido" => "Ghurin",
+            "MeleeTanque" => "Kragor",
+            "Arquero" => "Manolo",
+            "MagoAOE" => "Vexa",
+            _ => "Ghurin"
+        };
 
-        PhotonNetwork.Instantiate(playerPrefabName, pos, rot);
+        PhotonNetwork.Instantiate(prefabName, pos, rot);
     }
 
     public override void OnDisconnected(DisconnectCause cause)

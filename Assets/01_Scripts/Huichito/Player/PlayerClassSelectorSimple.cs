@@ -1,3 +1,4 @@
+﻿using Photon.Pun;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -20,6 +21,7 @@ public class PlayerClassSelectorSimple : MonoBehaviour
     public GameObject projectileAOE;        // opcional (AoE)
 
     private PlayerClass _lastApplied;
+    [SerializeField] private PlayerClassSelectorSimple selector;
 
     void Reset()
     {
@@ -31,6 +33,7 @@ public class PlayerClassSelectorSimple : MonoBehaviour
             var m = transform.Find("Muzzle");
             if (m) muzzle = m;
         }
+        if (!selector) selector = GetComponent<PlayerClassSelectorSimple>();
     }
 
     void Awake()
@@ -47,7 +50,7 @@ public class PlayerClassSelectorSimple : MonoBehaviour
 
     void Start()
     {
-        // Asegura aplicar una vez m�s al final del primer frame
+        // Asegura aplicar una vez más al final del primer frame
         StartCoroutine(ApplyNextFrame());
     }
 
@@ -164,5 +167,46 @@ public class PlayerClassSelectorSimple : MonoBehaviour
             Debug.LogWarning($"[PlayerClassSelector] {name}: Clase {clase} sin projectilePrefab asignado.");
         if ((clase == PlayerClass.Arquero || clase == PlayerClass.MagoAOE) && combat.muzzle == null)
             Debug.LogWarning($"[PlayerClassSelector] {name}: Clase {clase} sin Muzzle asignado.");
+    }
+    public void OnPhotonInstantiate(PhotonMessageInfo info)
+    {
+        // 1) recibe la clase que mandó NetLauncher
+        string id = null;
+        var data = info.photonView.InstantiationData;
+        if (data != null && data.Length > 0) id = data[0] as string;
+
+        // 2) si no llegó (caso local), usa PlayerPrefs como respaldo
+        if (string.IsNullOrEmpty(id))
+            id = PlayerPrefs.GetString("selected_character_id", "MeleeRapido");
+
+        // 3) aplica
+        if (!selector) selector = GetComponent<PlayerClassSelectorSimple>();
+        if (selector != null)
+        {
+            selector.clase = Parse(id);
+            selector.ApplyClass(); // ← usa tus valores (HP, daño, velocidad, proyectiles, etc.)
+            Debug.Log($"[PlayerClassInit] Clase aplicada: {id}");
+        }
+        else
+        {
+            Debug.LogWarning("[PlayerClassInit] No encontré PlayerClassSelectorSimple en el prefab.");
+        }
+
+        // (Opcional) Si quieres inicializar tus otros scripts de stats según la clase:
+        // var stats = GetComponent<PlayerStatsPhoton>();
+        // var hp    = GetComponent<Health>();
+        // if (stats && hp) { stats.BaseMaxHealth = (int)hp.maxHP; /* etc. */ }
+    }
+
+    private PlayerClassSelectorSimple.PlayerClass Parse(string id)
+    {
+        switch (id)
+        {
+            case "MeleeRapido": return PlayerClassSelectorSimple.PlayerClass.MeleeRapido;
+            case "MeleeTanque": return PlayerClassSelectorSimple.PlayerClass.MeleeTanque;
+            case "Arquero": return PlayerClassSelectorSimple.PlayerClass.Arquero;
+            case "MagoAOE": return PlayerClassSelectorSimple.PlayerClass.MagoAOE;
+            default: return PlayerClassSelectorSimple.PlayerClass.MeleeRapido;
+        }
     }
 }

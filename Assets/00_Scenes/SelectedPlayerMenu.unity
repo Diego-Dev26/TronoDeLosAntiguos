@@ -149,14 +149,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7300831}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.1900024, y: 2, z: 0}
+  m_LocalRotation: {x: 0, y: -0.011780783, z: 0, w: 0.9999306}
+  m_LocalPosition: {x: -2.65, y: -0.5, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 508740179}
   m_Father: {fileID: 0}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -1.35, z: 0}
 --- !u!136 &7300833
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -191,7 +191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3584174377004640b78947cbbba3075, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterId: Player2
+  characterId: MagoAOE
   animator: {fileID: 1481579412}
   idleStateName: Idle
   selectStateName: Dance
@@ -256,7 +256,11 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 6545af87b9783b2428e914296d454aac, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 927bca08aa813a2408c084651f7131d4, type: 2}
+      objectReference: {fileID: 9100000, guid: 07f89975b60743b42be868948fa4383b, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 6545af87b9783b2428e914296d454aac, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8111781155169087978, guid: 6545af87b9783b2428e914296d454aac, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -326,7 +330,11 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: d2272bd17bc03a947aa98c08d945532f, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: f2458d45686006d499b9d29c9b601a8b, type: 2}
+      objectReference: {fileID: 9100000, guid: 2e398f8e1b82e914b8123e6c04e93b3b, type: 2}
+    - target: {fileID: 5866666021909216657, guid: d2272bd17bc03a947aa98c08d945532f, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8111781155169087978, guid: d2272bd17bc03a947aa98c08d945532f, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -374,7 +382,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -772, y: -450}
+  m_AnchoredPosition: {x: -809, y: 455}
   m_SizeDelta: {x: 120.4522, y: 26.6412}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &77285645
@@ -718,7 +726,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 16, y: -252}
+  m_AnchoredPosition: {x: 2, y: -490}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &414189152
@@ -890,7 +898,11 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: b235cafaa3ca75c45ad26edbe99074a9, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 1bba503bc654c144b9accd61c7e971df, type: 2}
+      objectReference: {fileID: 9100000, guid: 995904665b39b81459cd837025abe754, type: 2}
+    - target: {fileID: 5866666021909216657, guid: b235cafaa3ca75c45ad26edbe99074a9, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8111781155169087978, guid: b235cafaa3ca75c45ad26edbe99074a9, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -928,14 +940,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 577466846}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.7, y: 2, z: 0}
+  m_LocalRotation: {x: 0, y: -0.3090171, z: 0, w: 0.95105654}
+  m_LocalPosition: {x: -8, y: -0.5, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 71981576}
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -36, z: 0}
 --- !u!136 &577466848
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -970,7 +982,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3584174377004640b78947cbbba3075, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterId: Player4
+  characterId: MeleeRapido
   animator: {fileID: 1569340603}
   idleStateName: Idle
   selectStateName: Dance
@@ -1077,7 +1089,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 0f104977d54cf754cb134f26a03a9737, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5e0dfa0734c4c664694f210b0d9db2a8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1393,6 +1405,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 2ab5e273c4e87b14caed067c317c15c0, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 2a4adc5b471bf224e86120f250757db7, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8111781155169087978, guid: 2a4adc5b471bf224e86120f250757db7, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1518,14 +1534,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1934589235}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.81, y: 2, z: 0}
+  m_LocalRotation: {x: 0, y: 0.22495107, z: 0, w: 0.9743701}
+  m_LocalPosition: {x: 2.42, y: -0.5, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 353820437}
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 26, z: 0}
 --- !u!136 &1934589237
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1560,7 +1576,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3584174377004640b78947cbbba3075, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterId: Player3
+  characterId: Arquero
   animator: {fileID: 1548031092}
   idleStateName: Idle
   selectStateName: Dance
@@ -1593,14 +1609,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1989843357}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.76, y: 2, z: 0}
+  m_LocalRotation: {x: 0, y: 0.35020736, z: 0, w: 0.9366722}
+  m_LocalPosition: {x: 6.95389, y: -0.5, z: -0.00772411}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 17737709}
   m_Father: {fileID: 0}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 41, z: 0}
 --- !u!136 &1989843359
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1635,7 +1651,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3584174377004640b78947cbbba3075, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterId: Player1
+  characterId: MeleeTanque
   animator: {fileID: 482269755}
   idleStateName: Idle
   selectStateName: Dance
