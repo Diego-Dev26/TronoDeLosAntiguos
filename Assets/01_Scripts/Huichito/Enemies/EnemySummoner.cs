@@ -96,7 +96,8 @@ public class EnemySummoner : EnemyBase
         Vector3 pos = transform.position + new Vector3(c.x, 0f, c.y);
 
         // Instanciar por red desde Resources
-        GameObject go = NetInstantiateRoomObject(minionPrefab, pos + Vector3.up * 2f, Quaternion.Euler(0, Random.Range(0f, 360f), 0));
+        // Antes: pos + Vector3.up * 2f
+        GameObject go = NetInstantiateRoomObject(minionPrefab, pos + Vector3.up * -1f, Quaternion.Euler(0, Random.Range(0f, 360f), 0));
         if (!go) return;
 
         // Alinear al piso de esta misma room (si existe)
@@ -156,27 +157,37 @@ public class EnemySummoner : EnemyBase
     // Alinea la base del minion al piso de la room (evita que quede atravesado)
     void SnapToFloor(GameObject go, GameObject room)
     {
-        // Raycast a piso (RoomFootprint si existe)
+        // 1) Máscara primaria: RoomFootprint si existe; si no, AllLayers
         int footprint = LayerMask.NameToLayer("RoomFootprint");
-        int mask = (footprint != -1) ? (1 << footprint) : Physics.AllLayers;
+        int primaryMask = (footprint != -1) ? (1 << footprint) : Physics.AllLayers;
 
+        // 2) Raycast hacia abajo con fallback a todas las capas
         RaycastHit hit;
-        Vector3 start = go.transform.position + Vector3.up * 5f;
+        Vector3 start = go.transform.position + Vector3.up * 6f;
         float floorY = go.transform.position.y;
 
-        if (Physics.Raycast(start, Vector3.down, out hit, 50f, mask, QueryTriggerInteraction.Ignore))
+        bool gotHit = Physics.Raycast(start, Vector3.down, out hit, 200f, primaryMask, QueryTriggerInteraction.Ignore)
+                      && hit.collider && hit.collider.transform.IsChildOf(room.transform)
+                      && Vector3.Dot(hit.normal, Vector3.up) > 0.65f; // evitar paredes/techos
+
+        if (!gotHit)
         {
-            if (hit.collider.transform.IsChildOf(room.transform))
-                floorY = hit.point.y;
+            if (Physics.Raycast(start, Vector3.down, out hit, 200f, Physics.AllLayers, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider && hit.collider.transform.IsChildOf(room.transform)
+                    && Vector3.Dot(hit.normal, Vector3.up) > 0.65f)
+                {
+                    gotHit = true;
+                }
+            }
         }
 
-        // Offset según collider/CC del minion
+        if (gotHit) floorY = hit.point.y;
+
+        // 3) Offset según el collider del minion
         float offsetY = 0.2f;
         var cc = go.GetComponent<CharacterController>();
-        if (cc)
-        {
-            offsetY = (cc.height * 0.5f) + cc.skinWidth - cc.center.y + 0.01f;
-        }
+        if (cc) offsetY = (cc.height * 0.5f) + cc.skinWidth - cc.center.y + 0.01f;
         else
         {
             var cap = go.GetComponent<CapsuleCollider>();
@@ -196,4 +207,5 @@ public class EnemySummoner : EnemyBase
         p.y = floorY + offsetY;
         go.transform.position = p;
     }
+
 }

@@ -59,8 +59,9 @@ public class RoomSpawner : MonoBehaviourPunCallbacks
             return;
         }
 
-        // Sala normal (o shop si toca)
-        GameObject prefab = template.ShouldForceShopThisTick()
+        // Sala normal (o shop si toca) --> ahora conservamos el flag para marcar la sala
+        bool isShopTick = template.ShouldForceShopThisTick();
+        GameObject prefab = isShopTick
             ? template.GetShopForSide(OpenSide)
             : PickFor(OpenSide);
 
@@ -84,7 +85,11 @@ public class RoomSpawner : MonoBehaviourPunCallbacks
         if (!go) { spawned = true; return; }
 
         template.RegisterRoom(go);
-        if (!go.GetComponent<RoomActivator>()) go.AddComponent<RoomActivator>();
+
+        // Asegurar RoomActivator y marcar tienda si corresponde (para que el spawner la saltee)
+        var activator = go.GetComponent<RoomActivator>();
+        if (!activator) activator = go.AddComponent<RoomActivator>();
+        if (isShopTick) activator.SetShop(true);
 
         DisableBackSpawnerByEntry(go, GetEntryTransformUsed(go));
 

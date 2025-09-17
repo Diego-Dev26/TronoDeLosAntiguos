@@ -9,6 +9,8 @@ TagManager:
   - Enemy
   - Bullet
   - PlayerSpawn
+  - Door
+  - wall
   layers:
   - Default
   - TransparentFX

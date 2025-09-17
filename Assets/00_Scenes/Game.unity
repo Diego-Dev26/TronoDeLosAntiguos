@@ -12824,7 +12824,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefabs:
   - {fileID: 1242495944546648201, guid: 10c83ad5f20a4494e966ab576c4c41de, type: 3}
-  - {fileID: 5311866816102746362, guid: 271abe53598360548841d6832dd32138, type: 3}
+  - {fileID: 5018720761792554388, guid: e25a6ea948ffcdd40b871746f8b2f110, type: 3}
   - {fileID: 497726716270743043, guid: 1ba080652d57a4e4a86ad4c4bff030b1, type: 3}
   - {fileID: 598761228458832193, guid: edc13d3b4f72880478f5efdb45edb768, type: 3}
   totalToSpawn: 8
@@ -32170,8 +32170,8 @@ MonoBehaviour:
   rooms: []
   maxRooms: 10
   shopEvery: 3
-  boss: {fileID: 7630125418203309013, guid: eda5e27258cc8414c88cb0f887371744, type: 3}
-  bossSpawnYOffset: 0.2
+  boss: {fileID: 3042909219653419295, guid: 2b23c5086e2d2a346a07da0a21336608, type: 3}
+  bossSpawnYOffset: 2
 --- !u!4 &1663935277
 Transform:
   m_ObjectHideFlags: 0

@@ -46,6 +46,8 @@ MonoBehaviour:
   - RpcSetPrice
   - RpcNotifyNotEnoughCoins
   - RPC_SetPose
+  - RPC_CloseDoors
+  - RPC_OpenDoors
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

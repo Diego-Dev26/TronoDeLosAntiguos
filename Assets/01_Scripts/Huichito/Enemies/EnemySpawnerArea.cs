@@ -39,6 +39,7 @@ public class EnemySpawnerArea : MonoBehaviourPunCallbacks
 
     void Start()
     {
+        EnsureDefaultsIfZeroed();
         if (PhotonNetwork.InRoom) TrySpawn();
     }
 
@@ -93,6 +94,8 @@ public class EnemySpawnerArea : MonoBehaviourPunCallbacks
             if (verboseLog) Debug.LogWarning("[EnemySpawn] No hay rooms; aborto.");
             yield break;
         }
+
+        // Marca la última como Exit (conserva tu comportamiento)
         MarkExitRoom(rooms[rooms.Count - 1]);
 
         // (3) Cuotas por sala
@@ -140,11 +143,17 @@ public class EnemySpawnerArea : MonoBehaviourPunCallbacks
     // ---------- Spawnear 1 en una room ----------
     bool TrySpawnOneInRoom(GameObject room)
     {
+        // 0) No spawnear en TIENDAS
+        var act = room.GetComponent<RoomActivator>();
+        if (act && act.IsShop) return false;
+
+        // 1) Punto válido dentro de la room
         if (!TryGetRandomPointInRoom(room, insidePadding, out Vector3 floorPoint))
             return false;
 
         if (HasNearby(floorPoint, placed, minSeparation)) return false;
 
+        // 2) Instanciar por red (asegurar prefijos + Rooms/)
         var prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
         GameObject go = NetInstantiateRoomObject(
             prefab,
@@ -153,12 +162,16 @@ public class EnemySpawnerArea : MonoBehaviourPunCallbacks
         );
         if (!go) return false;
 
+        // 3) Asentar y registrar (cuenta de muerte/limpieza)
         SnapToFloor(go, room);
         placed.Add(floorPoint);
 
-        var act = room.GetComponent<RoomActivator>();
         var eb = go.GetComponent<EnemyBase>();
-        if (act && eb) act.RegisterEnemy(eb);
+        if (act)
+        {
+            if (eb) act.RegisterEnemy(eb);
+            else act.AttachDeathRelay(go); // fallback: cubre golems u otros sin EnemyBase
+        }
 
         return true;
     }
@@ -171,6 +184,33 @@ public class EnemySpawnerArea : MonoBehaviourPunCallbacks
         for (int i = 0; i < anchors.Length; i++)
             set.Add(anchors[i].transform.root.gameObject);
         return new List<GameObject>(set);
+    }
+
+    bool TryGetRoomBounds(GameObject room, out Bounds bounds)
+    {
+        int footprintLayer = LayerMask.NameToLayer("RoomFootprint");
+        var cols = room.GetComponentsInChildren<Collider>(true);
+        bool any = false;
+        bounds = new Bounds(room.transform.position, Vector3.zero);
+
+        for (int i = 0; i < cols.Length; i++)
+        {
+            var c = cols[i];
+            if (!c || !c.enabled) continue;
+            if (footprintLayer != -1 && c.gameObject.layer != footprintLayer) continue;
+            if (!any) { bounds = c.bounds; any = true; } else bounds.Encapsulate(c.bounds);
+        }
+
+        if (!any)
+        {
+            for (int i = 0; i < cols.Length; i++)
+            {
+                var c = cols[i];
+                if (!c || !c.enabled) continue;
+                if (!any) { bounds = c.bounds; any = true; } else bounds.Encapsulate(c.bounds);
+            }
+        }
+        return any;
     }
 
     bool TryGetRandomPointInRoom(GameObject room, float padding, out Vector3 pos)
@@ -208,33 +248,6 @@ public class EnemySpawnerArea : MonoBehaviourPunCallbacks
         return false;
     }
 
-    bool TryGetRoomBounds(GameObject room, out Bounds bounds)
-    {
-        int footprintLayer = LayerMask.NameToLayer("RoomFootprint");
-        var cols = room.GetComponentsInChildren<Collider>(true);
-        bool any = false;
-        bounds = new Bounds(room.transform.position, Vector3.zero);
-
-        for (int i = 0; i < cols.Length; i++)
-        {
-            var c = cols[i];
-            if (!c || !c.enabled) continue;
-            if (footprintLayer != -1 && c.gameObject.layer != footprintLayer) continue;
-            if (!any) { bounds = c.bounds; any = true; } else bounds.Encapsulate(c.bounds);
-        }
-
-        if (!any)
-        {
-            for (int i = 0; i < cols.Length; i++)
-            {
-                var c = cols[i];
-                if (!c || !c.enabled) continue;
-                if (!any) { bounds = c.bounds; any = true; } else bounds.Encapsulate(c.bounds);
-            }
-        }
-        return any;
-    }
-
     bool HasNearby(Vector3 p, List<Vector3> list, float r)
     {
         float r2 = r * r;
@@ -246,7 +259,7 @@ public class EnemySpawnerArea : MonoBehaviourPunCallbacks
     // ---------- Net + snap ----------
     GameObject NetInstantiateRoomObject(GameObject prefabAsset, Vector3 pos, Quaternion rot)
     {
-        string[] prefixes = { "", "Prefabs/", "Prefabs/Huichito/", "Huichito/" };
+        string[] prefixes = { "", "Prefabs/", "Prefabs/Huichito/", "Huichito/", "Rooms/" };
         for (int i = 0; i < prefixes.Length; i++)
         {
             string key = prefixes[i] + prefabAsset.name;
@@ -256,6 +269,7 @@ public class EnemySpawnerArea : MonoBehaviourPunCallbacks
         Debug.LogError("[EnemySpawn] No encuentro en Resources: '" + prefabAsset.name + "'.");
         return null;
     }
+
     void MarkExitRoom(GameObject room)
     {
         if (!room) return;
@@ -263,6 +277,7 @@ public class EnemySpawnerArea : MonoBehaviourPunCallbacks
         if (!act) act = room.AddComponent<RoomActivator>();
         act.SetExit(true);
     }
+
     void SnapToFloor(GameObject go, GameObject room)
     {
         int footprint = LayerMask.NameToLayer("RoomFootprint");
@@ -297,5 +312,18 @@ public class EnemySpawnerArea : MonoBehaviourPunCallbacks
         var p = go.transform.position;
         p.y = floorY + offsetY;
         go.transform.position = p;
+    }
+
+    // ---------- Defaults útiles si quedó todo en 0 (modo pruebas) ----------
+    void EnsureDefaultsIfZeroed()
+    {
+        // Si todo está en cero y hay prefabs, asume valores razonables para que sí spawnee.
+        if (useProgression && minPerRoom == 0 && extraPerRoomAtEnd == 0 && maxPerRoom == 0 && (enemyPrefabs != null && enemyPrefabs.Length > 0))
+        {
+            minPerRoom = 3;
+            extraPerRoomAtEnd = 4;
+            maxPerRoom = 8;
+            if (verboseLog) Debug.Log("[EnemySpawn] Defaults aplicados: min=3, extraEnd=4, max=8.");
+        }
     }
 }
