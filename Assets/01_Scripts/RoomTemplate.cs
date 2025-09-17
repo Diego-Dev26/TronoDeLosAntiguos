@@ -1,5 +1,4 @@
-﻿// Assets/01_Scripts/RoomTemplate.cs
-using Photon.Pun;
+﻿using Photon.Pun;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,93 +17,74 @@ public class RoomTemplate : MonoBehaviour
     public GameObject shopRight;
 
     [Header("Cierre / Lista")]
-    [Tooltip("Cap opcional (tapa): una habitación sin spawners para cerrar una puerta al agotar presupuesto.")]
+    [Tooltip("Prefab opcional para tapar (sin spawners).")]
     public GameObject ClosedRoom;
-
-    [Tooltip("Lista runtime de habitaciones del piso/tanda actual (se rellena en RegisterRoom).")]
     public List<GameObject> rooms = new List<GameObject>();
 
-    [Header("Presupuesto inicial (solo si no lo resetea FloorManager)")]
-    [Tooltip("Presupuesto por tanda si nadie lo ajusta. FloorManager normalmente llama ResetBudget().")]
+    [Header("Generación")]
+    [Tooltip("Tope total de salas por piso (incluye la inicial si la agregas a 'rooms').")]
     public int maxRooms = 15;
 
-    [Header("Tienda")]
-    [Tooltip("Fuerza una tienda cada N salas colocadas dentro de la tanda actual (N=3 -> 3,6,9,...)")]
+    [Tooltip("Frecuencia de tienda (3 => 3, 6, 9, 12, 15…)")]
     public int shopEvery = 3;
 
-    [Header("Spawns finales (opcional)")]
-    public GameObject boss;      // Debe estar en Resources (mismo nombre) y tener PhotonView
-    public GameObject enemy;     // Ídem
-    public int minRooms = 5;
+    [Header("Boss final")]
+    [Tooltip("Prefab del boss (con PhotonView y bajo Resources).")]
+    public GameObject boss;
+    [Tooltip("Offset vertical para apoyar al boss sobre el piso.")]
+    public float bossSpawnYOffset = 0.2f;
 
-    // ---------- Estado interno (por tanda/piso) ----------
-    int _budgetLeft = 0;     // cuánto queda por colocar en ESTA tanda
-    int _placedCount = 0;    // cuántas salas normales ya se colocaron en ESTA tanda
+    // ---------- Estado interno ----------
+    int _reserved;          // reservas realizadas (presupuesto)
     int _lastShopTick = -999;
+    bool _initialized;
+    bool _bossSpawned;
 
-    void Awake()
+    void Start()
     {
-        // Si nadie resetea el presupuesto (p. ej., FloorManager al empezar la tanda),
-        // dejamos un presupuesto inicial para que funcione en modo suelto.
-        ResetBudget(maxRooms);
+        if (!_initialized) InitBudget();
     }
 
-    // =====================================================
-    // API de presupuesto por tanda (usada por RoomSpawner / FloorManager)
-    // =====================================================
-
-    /// <summary>Resetea presupuesto para una nueva tanda/piso. Limpia contadores y la lista de rooms.</summary>
-    public void ResetBudget(int newMax)
+    void OnValidate()
     {
-        _budgetLeft = Mathf.Max(0, newMax);
-        _placedCount = 0;
+        if (!_initialized)
+            _reserved = Mathf.Clamp(rooms != null ? rooms.Count : 0, 0, maxRooms);
+    }
+
+    void InitBudget()
+    {
+        _reserved = Mathf.Clamp(rooms != null ? rooms.Count : 0, 0, maxRooms);
         _lastShopTick = -999;
-
-        // Limpia solo la lista (FloorManager debería destruir objetos si corresponde)
-        rooms.Clear();
+        _initialized = true;
+        _bossSpawned = false;
     }
 
-    /// <summary>Alias cómodo si prefieres llamarlo así desde otros sitios.</summary>
-    public void ResetForNewFloor()
-    {
-        ResetBudget(maxRooms);
-    }
-
-    /// <summary>Intenta consumir 1 de presupuesto para colocar una sala normal.</summary>
+    // ---------- API que usan los spawners ----------
     public bool TryConsumeRoomBudget()
     {
-        if (_budgetLeft <= 0) return false;
-        _budgetLeft--;
-        _placedCount++;
+        if (!_initialized) InitBudget();
+        if (_reserved >= maxRooms) return false;
+        _reserved++;
         return true;
     }
 
-    /// <summary>¿Queda presupuesto en la tanda actual?</summary>
-    public bool HasBudgetLeft => _budgetLeft > 0;
+    public bool HasBudgetLeft => _reserved < maxRooms;
 
-    /// <summary>Cuando instancias una sala (normal/tienda/cap), llama a esto para llevar la lista al día.</summary>
     public void RegisterRoom(GameObject go)
     {
-        if (go == null) return;
-        if (!rooms.Contains(go)) rooms.Add(go);
+        if (go && !rooms.Contains(go)) rooms.Add(go);
     }
 
-    // =====================================================
-    // Lógica de tienda
-    // =====================================================
-
-    /// <summary>Devuelve true si en esta colocación debe ir una tienda (según shopEvery).</summary>
     public bool ShouldForceShopThisTick()
     {
         if (shopEvery <= 0) return false;
-        if (_placedCount <= 0) return false;
-        if (_placedCount % shopEvery != 0) return false;
-        if (_lastShopTick == _placedCount) return false; // evita doble disparo en el mismo tick
-        _lastShopTick = _placedCount;
+        if (_reserved <= 0) return false;
+        if (_reserved % shopEvery != 0) return false;
+        if (_lastShopTick == _reserved) return false;
+        _lastShopTick = _reserved;
         return true;
     }
 
-    /// <summary>Devuelve la variante de tienda correcta para el lado que está abierto.</summary>
     public GameObject GetShopForSide(int openSide)
     {
         switch (openSide)
@@ -117,31 +97,120 @@ public class RoomTemplate : MonoBehaviour
         }
     }
 
-    // =====================================================
-    // Utilidades varias
-    // =====================================================
+    public bool CanCloseRoom() => rooms != null && rooms.Count >= 2;
 
-    /// <summary>¿Es “seguro” cerrar (p. ej., para OnTriggerEnter de dos spawners que chocan)?</summary>
-    public bool CanCloseRoom()
+    public void ResetForNewFloor()
     {
-        return rooms != null && rooms.Count >= minRooms;
+        rooms.Clear();
+        _reserved = 0;
+        _lastShopTick = -999;
+        _initialized = true;
+        _bossSpawned = false;
     }
 
-    /// <summary>Spawns finales de ejemplo (si quieres lanzar jefe/enemigos cuando acabas un piso).</summary>
-    public void SpawnFinals()
+    // ---------- Boss en la última room ----------
+    public void TrySpawnBossAtRoom(GameObject room)
     {
+        if (_bossSpawned) return;
         if (!PhotonNetwork.IsMasterClient) return;
-        if (rooms == null || rooms.Count == 0) return;
+        if (!boss) return;
+        if (!room) return;
 
-        // Boss en la última
-        if (boss)
-            PhotonNetwork.InstantiateRoomObject(boss.name, rooms[rooms.Count - 1].transform.position, Quaternion.identity);
+        // 1) Punto de spawn: si hay un hijo llamado "BossSpawn", úsalo; si no, el centro del piso.
+        Transform t = FindChildRecursive(room.transform, "BossSpawn");
+        Vector3 pos;
 
-        // Mobs en el resto
-        if (enemy)
+        if (t)
         {
-            for (int i = 0; i < rooms.Count - 1; i++)
-                PhotonNetwork.InstantiateRoomObject(enemy.name, rooms[i].transform.position, Quaternion.identity);
+            pos = t.position;
         }
+        else
+        {
+            // Centro del footprint (o de todos los colliders) y apoyado al piso
+            if (!TryGetRoomBounds(room, out Bounds b))
+                b = new Bounds(room.transform.position, new Vector3(6, 3, 6));
+
+            Vector3 center = b.center;
+            // Raycast hacia abajo a la capa RoomFootprint (si existe)
+            int footprint = LayerMask.NameToLayer("RoomFootprint");
+            int mask = (footprint != -1) ? (1 << footprint) : Physics.AllLayers;
+
+            float floorY = center.y;
+            if (Physics.Raycast(center + Vector3.up * 6f, Vector3.down, out RaycastHit hit, 20f, mask, QueryTriggerInteraction.Ignore))
+                floorY = hit.point.y;
+
+            pos = new Vector3(center.x, floorY + bossSpawnYOffset, center.z);
+        }
+
+        // 2) Instanciar por red (buscando el prefab bajo Resources)
+        string[] prefixes = { "", "Prefabs/", "Prefabs/Huichito/", "Huichito/", "Rooms/" };
+        for (int i = 0; i < prefixes.Length; i++)
+        {
+            string key = prefixes[i] + boss.name;
+            if (Resources.Load<GameObject>(key) != null)
+            {
+                PhotonNetwork.InstantiateRoomObject(key, pos, Quaternion.identity);
+                _bossSpawned = true;
+                return;
+            }
+        }
+
+        Debug.LogError("[RoomTemplate] No encuentro el boss en Resources: '" + boss.name + "'.");
+    }
+
+    // ---------- helpers internos ----------
+    bool TryGetRoomBounds(GameObject room, out Bounds bounds)
+    {
+        int footprintLayer = LayerMask.NameToLayer("RoomFootprint");
+        var cols = room.GetComponentsInChildren<Collider>(true);
+        bool any = false;
+        bounds = new Bounds(room.transform.position, Vector3.zero);
+
+        // Preferir footprint
+        for (int i = 0; i < cols.Length; i++)
+        {
+            var c = cols[i];
+            if (!c || !c.enabled) continue;
+            if (footprintLayer != -1 && c.gameObject.layer != footprintLayer) continue;
+            if (!any) { bounds = c.bounds; any = true; }
+            else bounds.Encapsulate(c.bounds);
+        }
+
+        // Fallback: todos
+        if (!any)
+        {
+            for (int i = 0; i < cols.Length; i++)
+            {
+                var c = cols[i];
+                if (!c || !c.enabled) continue;
+                if (!any) { bounds = c.bounds; any = true; }
+                else bounds.Encapsulate(c.bounds);
+            }
+        }
+        return any;
+    }
+    public void ResetBudget(int newMax)
+    {
+        // Actualiza el tope para la siguiente tanda/piso
+        maxRooms = newMax;
+
+        // Limpia y resetea los contadores igual que harías para un piso nuevo
+        rooms.Clear();
+        _reserved = 0;
+        _lastShopTick = -999;
+        _initialized = true;
+        _bossSpawned = false;
+    }
+
+    Transform FindChildRecursive(Transform root, string name)
+    {
+        if (!root) return null;
+        if (root.name == name) return root;
+        for (int i = 0; i < root.childCount; i++)
+        {
+            var r = FindChildRecursive(root.GetChild(i), name);
+            if (r) return r;
+        }
+        return null;
     }
 }

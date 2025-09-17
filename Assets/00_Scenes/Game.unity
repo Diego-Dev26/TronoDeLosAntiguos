@@ -25000,7 +25000,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcaf98da263de2740b25ac0ecd4ea012, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefabName: PlayerNet
+  playerPrefabName: Ghurin
 --- !u!4 &1313725136
 Transform:
   m_ObjectHideFlags: 0
@@ -32171,8 +32171,7 @@ MonoBehaviour:
   maxRooms: 10
   shopEvery: 3
   boss: {fileID: 7630125418203309013, guid: eda5e27258cc8414c88cb0f887371744, type: 3}
-  enemy: {fileID: 700303765}
-  minRooms: 5
+  bossSpawnYOffset: 0.2
 --- !u!4 &1663935277
 Transform:
   m_ObjectHideFlags: 0

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NetLauncher : MonoBehaviourPunCallbacks
 {
-    public string playerPrefabName = "PlayerNet";
+    public string playerPrefabName = "Ghurin";
 
     void Start()
     {

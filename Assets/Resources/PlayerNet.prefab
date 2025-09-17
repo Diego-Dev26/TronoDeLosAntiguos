@@ -169,7 +169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58323e14217208442855f2ada181882c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5.2
+  moveSpeed: 6.2
   gravity: -18
   jumpSpeed: 7.5
   dodgeDistance: 5
@@ -197,10 +197,10 @@ MonoBehaviour:
   meleeCooldown: 0.35
   enableShoot: 1
   fireOnLeftClick: 1
-  projectileDamage: 22
-  projectileSpeed: 16
+  projectileDamage: 16
+  projectileSpeed: 24
   projectileLife: 4
-  shootCooldown: 1
+  shootCooldown: 0.45
 --- !u!114 &914389035826339098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,7 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dab5bdb7dc146d44b9ab4d3ab500dce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clase: 0
+  clase: 2
   health: {fileID: 2446874375956279847}
   controller: {fileID: 4664499432746184286}
   combat: {fileID: 4664499432746184287}
@@ -232,9 +232,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d713ca4455d7e5a4b97f069fbea0c315, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 110
+  maxHP: 100
   damageReduction: 0
-  currentHP: 110
+  currentHP: 100
 --- !u!114 &6911735114027922910
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,7 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dab5bdb7dc146d44b9ab4d3ab500dce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clase: 3
+  clase: 2
   health: {fileID: 2446874375956279847}
   controller: {fileID: 4664499432746184286}
   combat: {fileID: 4664499432746184287}

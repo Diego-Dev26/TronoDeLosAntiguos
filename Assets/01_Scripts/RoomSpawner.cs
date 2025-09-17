@@ -1,5 +1,4 @@
-﻿// Assets/01_Scripts/RoomSpawner.cs
-using Photon.Pun;
+﻿using Photon.Pun;
 using UnityEngine;
 
 public class RoomSpawner : MonoBehaviourPunCallbacks
@@ -11,15 +10,14 @@ public class RoomSpawner : MonoBehaviourPunCallbacks
     bool started;
     bool spawned;
 
+    Transform _lastUsedEntry;
+
     void Start()
     {
         if (PhotonNetwork.InRoom) TryBegin();
     }
 
-    public override void OnJoinedRoom()
-    {
-        TryBegin();
-    }
+    public override void OnJoinedRoom() => TryBegin();
 
     void TryBegin()
     {
@@ -43,19 +41,17 @@ public class RoomSpawner : MonoBehaviourPunCallbacks
     {
         if (spawned || template == null) return;
 
-        // 1) ¿Queda presupuesto?
+        // ¿Queda presupuesto?
         if (!template.TryConsumeRoomBudget())
         {
-            // Sin presupuesto: colocar CAP opcional o cortar
+            // Sin presupuesto: CAP opcional
             if (template.ClosedRoom != null)
             {
                 var cap = PlaceRoom(template.ClosedRoom);
                 if (cap)
                 {
-                    // Asegúrate de que el cap no tenga spawners
                     RemoveAllChildSpawners(cap);
                     template.RegisterRoom(cap);
-                    // Desactivar la puerta por la que entramos
                     DisableBackSpawnerByEntry(cap, GetEntryTransformUsed(cap));
                 }
             }
@@ -63,14 +59,13 @@ public class RoomSpawner : MonoBehaviourPunCallbacks
             return;
         }
 
-        // 2) Sala normal (o shop si toca)
+        // Sala normal (o shop si toca)
         GameObject prefab = template.ShouldForceShopThisTick()
             ? template.GetShopForSide(OpenSide)
             : PickFor(OpenSide);
 
         if (!prefab)
         {
-            // No hay prefab para este lado: corta con cap si existe
             if (template.ClosedRoom != null)
             {
                 var cap = PlaceRoom(template.ClosedRoom);
@@ -91,17 +86,20 @@ public class RoomSpawner : MonoBehaviourPunCallbacks
         template.RegisterRoom(go);
         if (!go.GetComponent<RoomActivator>()) go.AddComponent<RoomActivator>();
 
-        // Desactiva el spawner justo de la puerta por la que acabamos de entrar
         DisableBackSpawnerByEntry(go, GetEntryTransformUsed(go));
 
-        // 3) Si no queda presupuesto después de colocar esta sala, corta cualquier expansión
+        // Si ya NO queda presupuesto después de colocar esta sala,
+        // esta ES la última room => invoca el boss aquí (solo master)
         if (!template.HasBudgetLeft)
-            RemoveAllChildSpawners(go);
+        {
+            template.TrySpawnBossAtRoom(go);
+            RemoveAllChildSpawners(go); // corta expansión
+        }
 
         spawned = true;
     }
 
-    // ---------- Instanciación + alineación ----------
+    // ---------- Instanciación + alineación (post-instancia clásica y estable) ----------
     GameObject PlaceRoom(GameObject prefab)
     {
         var go = NetInstantiate(prefab, transform.position, prefab.transform.rotation);
@@ -114,16 +112,16 @@ public class RoomSpawner : MonoBehaviourPunCallbacks
             return go;
         }
 
-        // ⚠️ PUERTA A USAR EN LA SALA NUEVA: la opuesta a la del spawner
+        // En la sala nueva, la puerta a usar es la opuesta al OpenSide del spawner
         int entrySideInNew = Opposite(OpenSide);
         var entry = anchors.GetEntryForOpenSide(entrySideInNew);
         if (!entry)
         {
-            Debug.LogWarning($"[Spawner] '{go.name}' sin ancla para lado {entrySideInNew} (opuesto de {OpenSide}).");
+            Debug.LogWarning($"[Spawner] '{go.name}' sin ancla para lado {entrySideInNew}.");
             return go;
         }
 
-        // ROTACIÓN: hacer que ese entry mire hacia -forward del spawner
+        // ROTACIÓN: entry mira hacia -forward del spawner
         Vector3 want = -transform.forward; want.y = 0; want.Normalize();
         Vector3 have = entry.forward; have.y = 0; have.Normalize();
         if (have.sqrMagnitude > 1e-4f && want.sqrMagnitude > 1e-4f)
@@ -138,15 +136,12 @@ public class RoomSpawner : MonoBehaviourPunCallbacks
         Vector3 delta = transform.position - entry.position;
         go.transform.position += delta;
 
-        // Guarda el entry usado para este go (lo leeremos luego)
         _lastUsedEntry = entry;
         return go;
     }
 
-    Transform _lastUsedEntry; // cache del entry usado en PlaceRoom
     Transform GetEntryTransformUsed(GameObject go)
     {
-        // Si por alguna razón PlaceRoom no lo dejó cacheado, intenta volver a calcularlo
         if (_lastUsedEntry && _lastUsedEntry.gameObject && _lastUsedEntry.root == go.transform.root)
             return _lastUsedEntry;
 
@@ -172,7 +167,8 @@ public class RoomSpawner : MonoBehaviourPunCallbacks
 
     GameObject NetInstantiate(GameObject prefabAsset, Vector3 pos, Quaternion rot)
     {
-        string[] prefixes = { "", "Prefabs/", "Prefabs/Huichito/", "Huichito/" };
+        // Usa la misma clave en todos los clientes. Mantengo prefijos por compatibilidad.
+        string[] prefixes = { "", "Prefabs/", "Prefabs/Huichito/", "Huichito/", "Rooms/" };
         foreach (var pre in prefixes)
         {
             string key = pre + prefabAsset.name;
@@ -183,7 +179,7 @@ public class RoomSpawner : MonoBehaviourPunCallbacks
         return null;
     }
 
-    // 🔒 Desactiva el spawner más cercano al entry usado (robusto)
+    // Desactiva el spawner más cercano a la puerta por la que entramos
     void DisableBackSpawnerByEntry(GameObject roomGO, Transform usedEntry)
     {
         if (!usedEntry) return;
@@ -200,7 +196,7 @@ public class RoomSpawner : MonoBehaviourPunCallbacks
         if (best) best.gameObject.SetActive(false);
     }
 
-    // Deshabilita/Elimina todos los spawners hijos (para caps o corte de expansión)
+    // Deshabilita TODOS los spawners hijos (para cortar expansión / caps)
     void RemoveAllChildSpawners(GameObject roomGO)
     {
         var spawners = roomGO.GetComponentsInChildren<RoomSpawner>(true);
